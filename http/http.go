@@ -16,22 +16,26 @@ const (
 	defaultAccountId = "a-shpoolxx"
 )
 
-func generateBaseUrl(endpoint string, id interface{}) string {
+func generateBaseUrl(endpoint string, params interface{}) string {
 	baseurl := defaultScheme + "://" + defaultHost + ":" + defaultPort + defaultPath + "/" + endpoint
 
-	switch id.(type) {
-	case string:
-		baseurl = baseurl + "/" + id.(string)
-	}
+        switch t := params.(type) {
+        case string:
+                baseurl = baseurl + "/" + t
+        case map[string]string:
+                if id, ok := t["id"]; ok {
+                        baseurl = baseurl + "/" + id
+                }
+        }
 	return baseurl
 }
 
 func generateNewRequest(verb string, baseurl string, data url.Values) (req *http.Request) {
 	switch verb {
-	case "GET", "DELETE":
+	case "GET", "DELETE", "PUT":
 		req, _ := http.NewRequest(verb, baseurl, nil)
 		return req
-	case "POST", "PUT":
+	case "POST":
 		req, _ := http.NewRequest(verb, baseurl, strings.NewReader(data.Encode()))
 		return req
 	}
@@ -53,7 +57,7 @@ func SendRequest(verb string, suffix string, params interface{}) {
 
 	req := generateNewRequest(verb, baseurl, data)
 
-	if verb == "GET" && data != nil {
+	if (verb == "GET" || verb == "PUT") && data != nil {
 		req.URL.RawQuery = data.Encode()
 	}
 
