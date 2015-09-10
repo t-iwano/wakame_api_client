@@ -44,10 +44,12 @@ func SendRequest(verb string, suffix string, params interface{}) {
 
 	data := url.Values{}
 
-	switch params.(type) {
-	case map[string]string:
-	     fmt.Println(params)
-	}
+        switch p := params.(type) {
+        case map[string]string:
+                for k, v := range p {
+                        data.Add(k, v)
+                }
+        }
 
 	req := generateNewRequest(verb, baseurl, data)
 
