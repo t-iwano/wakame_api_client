@@ -3,28 +3,31 @@ package instance
 import "github.com/t-iwano/wakame_api_client/http"
 
 type Endpoint struct {
+	http *http.Client
 }
 
 func (endpoint *Endpoint) Index() {
-     http.SendRequest("GET", "instances", nil)
+	endpoint.http.SendRequest("GET", "instances", nil)
 }
 
 func (endpoint *Endpoint) Show(id string) {
-     http.SendRequest("GET", "instances", id)
+	endpoint.http.SendRequest("GET", "instances", id)
 }
 
 func (endpoint *Endpoint) Create(params map[string]string) {
-     http.SendRequest("POST", "instances", params)
+	endpoint.http.SendRequest("POST", "instances", params)
 }
 
 func (endpoint *Endpoint) Update(params map[string]string) {
-     http.SendRequest("PUT", "instances", params)
+	endpoint.http.SendRequest("PUT", "instances", params)
 }
 
 func (endpoint *Endpoint) Destroy(id string) {
-     http.SendRequest("DELETE", "instances", id)
+	endpoint.http.SendRequest("DELETE", "instances", id)
 }
 
-func NewInstanceInitialize() *Endpoint {
-     return &Endpoint{}
+func NewInstanceInitialize(client *http.Client) *Endpoint {
+	return &Endpoint{
+		http: client,
+	}
 }
